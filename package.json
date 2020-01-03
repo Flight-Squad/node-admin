@@ -1,0 +1,43 @@
+{
+  "name": "@flight-squad/admin",
+  "version": "0.0.1",
+  "description": "Shared admin utilities that should only be accessed server-side",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:check": "tsc --noEmit",
+    "start": "node -r ts-node/register src/start.ts",
+    "start:break": "node --inspect-brk -r ts-node/register src/start.ts",
+    "start:debug": "node --inspect -r ts-node/register src/start.ts",
+    "test": "echo \"Success: no test specified\" && exit 0",
+    "lint:fix": "eslint --fix ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Flight-Squad/node-admin.git"
+  },
+  "author": "Pujit Mehrotra",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/Flight-Squad/node-admin/issues"
+  },
+  "homepage": "https://github.com/Flight-Squad/node-admin#readme",
+  "devDependencies": {
+    "@types/node": "^13.1.2",
+    "@typescript-eslint/eslint-plugin": "^2.14.0",
+    "@typescript-eslint/parser": "^2.14.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^3.1.0",
+    "prettier": "^1.19.1",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run build",
+      "pre-push": "npm test"
+    }
+  }
+}
