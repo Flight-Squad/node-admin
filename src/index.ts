@@ -1,10 +1,3 @@
-export class Database {
-    hi: string;
-    constructor(props: InitProps) {
-        this.hi = props.config;
-    }
-}
-
-export interface InitProps {
-    config;
-}
+export * from './agents';
+export * from './database';
+export * from './flightsquad';

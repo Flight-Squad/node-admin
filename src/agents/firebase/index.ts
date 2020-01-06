@@ -1,0 +1,164 @@
+import admin, { firestore } from 'firebase-admin';
+import fs from 'fs';
+import { ConfigFunc } from '../../entity';
+import { DbImplementation } from '../../database/interfaces';
+
+export class Firebase implements DbImplementation {
+    readonly firebase: admin.database.Database;
+    readonly firestore: firestore.Firestore;
+
+    private constructor(firebase, firestore) {
+        this.firebase = firebase;
+        this.firestore = firestore;
+    }
+
+    static readonly init: ConfigFunc<Firebase, FirebaseConfig> = config => {
+        const { serviceAccount, firebaseUrl, serviceAccountPath } = config;
+        // For some reason, initializeApp really wants to take in a require statement
+        fs.writeFileSync(serviceAccountPath, serviceAccount);
+        admin.initializeApp({
+            //eslint-disable-next-line
+            credential: admin.credential.cert(require(serviceAccountPath)),
+            databaseURL: firebaseUrl,
+        });
+        return new Firebase(admin.database(), admin.firestore());
+    };
+
+    private mergeSet = (docRef: firestore.DocumentReference, data): Promise<firestore.WriteResult> =>
+        docRef.set(data, { merge: true });
+
+    private docRef = ({ path, coll, id }: FirestoreDocId): firestore.DocumentReference =>
+        path ? this.firestore.doc(path) : this.firestore.collection(coll).doc(id);
+
+    async del(doc: FirestoreDocId): Promise<firestore.WriteResult> {
+        return this.docRef(doc).delete();
+    }
+
+    async getData(doc: FirestoreDocId): Promise<firestore.DocumentData> {
+        return (await this.docRef(doc).get()).data;
+    }
+
+    readonly create = this.update;
+
+    async update(coll: string, id: string, data) {
+        const ref = this.docRef({ coll, id });
+        await this.mergeSet(ref, data);
+        return { coll, id, data };
+    }
+
+    async find<T extends FirestoreObject>(coll: string, id: string, clAss: new (props) => T): Promise<T> {
+        const ref = this.docRef({ coll, id });
+        const snapshot = await ref.get();
+        // Have to return null as alternative because typescript won't let me return a boolean
+        return snapshot.exists ? new clAss({ coll, id, ...snapshot.data }) : null;
+    }
+
+    async delete(coll: string, id: string, preCondition?) {
+        return this.docRef({ coll, id }).delete(preCondition);
+    }
+
+    static readonly Collections = {
+        Searches: 'searches',
+        Trips: 'trips',
+    };
+}
+
+export interface FirestoreDocId {
+    /** Optional if `path` is defined */
+    coll?: string;
+
+    /** doc id, Optional if creating a new document */
+    id?: string;
+
+    /** Optional if collection and docId are defined
+     *
+     * Note that docId is always optional if creating a new document
+     */
+    path?: string;
+}
+
+export interface FirebaseConfig {
+    serviceAccount: string;
+    firebaseUrl?: string;
+    serviceAccountPath: string;
+}
+
+// Use for testing if you ever change anything
+
+// const firebase = Firebase.init({
+//     firebaseUrl: process.env.FIREBASE_URL,
+//     serviceAccount: process.env.FS_CONFIG,
+//     serviceAccountPath: path.resolve(__dirname, './serviceAccount.json'),
+// });
+
+// // Should output 'true true'
+// console.log(Boolean(firebase.firestore), Boolean(firebase.firebase));
+
+export abstract class FirestoreObject {
+    id: string;
+    coll: string;
+    db: Firebase;
+
+    constructor(props: FirestoreObjectConfig) {
+        const { id, db, ...data } = props;
+        this.id = id;
+        // Easier testing
+        if ((props.coll || props.collection) && process.env.NODE_ENV !== 'production') {
+            this.collection = (): string => props.coll || props.collection;
+        }
+        this.coll = this.collection();
+        this.db = db;
+        for (const [key, val] of Object.entries(data)) {
+            this[key] = val;
+        }
+    }
+
+    /** Refers to the firestore collection of the object */
+    abstract collection(): string;
+
+    /** Returns object with extraneous fields ommitted */
+    data() {
+        const { id, coll, db, collection, refresh, updateDoc, createDoc, deleteDoc, data, ...info } = this;
+        return info;
+    }
+
+    /**
+     * Returns instance of class passed in
+     *
+     * New instance is populated with latest data in store
+     * @param clAss
+     */
+    refresh<T extends FirestoreObject>(clAss: new (props) => T): Promise<T> {
+        return this.db.find(this.coll, this.id, clAss);
+    }
+
+    // FUCD methods -- see Firebase object for
+
+    /**
+     *
+     * @param data data to update server with
+     * @param clAss Class to return an instance of
+     */
+    async updateDoc<T extends FirestoreObject>(data, clAss: new (props) => T): Promise<T> {
+        await this.db.update(this.coll, this.id, data);
+        return new clAss({ id: this.id, db: this.db, ...data });
+    }
+
+    async createDoc() {
+        await this.db.update(this.coll, this.id, this.data());
+        return this;
+    }
+
+    async deleteDoc() {
+        await this.db.delete(this.coll, this.id);
+        return true;
+    }
+}
+
+export interface FirestoreObjectConfig {
+    id: string;
+    db: Firebase;
+    // Suppport additional fields
+    // eslint-disable-next-line
+    [field: string]: any;
+}

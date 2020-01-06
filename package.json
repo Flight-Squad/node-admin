@@ -6,9 +6,11 @@
   "scripts": {
     "build": "tsc",
     "build:check": "tsc --noEmit",
-    "start": "node -r ts-node/register src/start.ts",
-    "start:break": "node --inspect-brk -r ts-node/register src/start.ts",
-    "start:debug": "node --inspect -r ts-node/register src/start.ts",
+    "start": "node -r ts-node/register src/index.ts",
+    "start:break": "node --inspect-brk -r ts-node/register src/index.ts",
+    "start:debug": "node --inspect -r ts-node/register src/index.ts",
+    "debug": "node --inspect -r ts-node/register -r dotenv/config",
+    "debug:break": "node --inspect-brk -r ts-node/register -r dotenv/config",
     "test": "echo \"Success: no test specified\" && exit 0",
     "lint:fix": "eslint --fix ."
   },
@@ -26,6 +28,7 @@
     "@types/node": "^13.1.2",
     "@typescript-eslint/eslint-plugin": "^2.14.0",
     "@typescript-eslint/parser": "^2.14.0",
+    "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-prettier": "^3.1.2",
@@ -39,5 +42,9 @@
       "pre-commit": "npm run build:check",
       "pre-push": "npm test"
     }
+  },
+  "dependencies": {
+    "firebase-admin": "^8.9.0",
+    "uuid": "^3.3.3"
   }
 }
