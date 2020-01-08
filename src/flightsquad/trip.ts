@@ -102,10 +102,8 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
         return searchProviders.every(prov => TripGroupProviders.includes(prov));
     }
 
-    // TODO inverse dependency flow for testing? It's 2 AM I might be TripGroupping
-
+    // CONSIDER inverse dependency flow for testing?
     sortByPriceAsc(): Array<Trip> {
-        // TODO implement
         const options = [];
         // Aggregate all entries
         for (const [, val] of Object.entries(this.providers)) {
@@ -121,8 +119,9 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
     }
 
     benchmarkTrip(): Trip {
-        // TODO returns lowest google price
-        // implement failure case
+        // TODO implement failure case
+
+        // returns lowest google price
         return this.bestTripFrom(SearchProviders.GoogleFlights);
     }
 }

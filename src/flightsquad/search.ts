@@ -37,7 +37,6 @@ export class FlightSearch extends FirestoreObject implements FlightSearchFields 
     readonly status: FlightSearchStatus;
     readonly stops: string | number | FlightStops;
 
-    // TODO: Refactor: switch to dependency injection
     private static readonly db = Database.firebase;
 
     private static readonly Collection = Firebase.Collections.Searches;
@@ -50,7 +49,7 @@ export class FlightSearch extends FirestoreObject implements FlightSearchFields 
     collection = (): string => FlightSearch.Collection;
 }
 
-// TODO: Remove
+// TODO: Move to integration test
 
 // const firebase = Firebase.init({
 //     firebaseUrl: process.env.FIREBASE_URL,
