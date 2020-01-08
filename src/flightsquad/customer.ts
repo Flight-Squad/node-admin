@@ -23,4 +23,9 @@ export class Customer extends FirestoreObject implements CustomerFields {
     readonly dob: string;
     readonly stripe: string;
     collection = (): string => Firebase.Collections.Customers;
+
+    static createNewCustomer(): Customer {
+        // TODO implement
+        return null;
+    }
 }
