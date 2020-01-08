@@ -2,6 +2,7 @@ import admin, { firestore } from 'firebase-admin';
 import fs from 'fs';
 import { ConfigFunc } from '../../entity';
 import { DbImplementation } from '../../database/interfaces';
+import { Database } from '../../database';
 
 export class Firebase implements DbImplementation {
     readonly firebase: admin.database.Database;
@@ -60,6 +61,9 @@ export class Firebase implements DbImplementation {
     static readonly Collections = {
         Searches: 'searches',
         Trips: 'trips',
+        TripGroups: 'trip_groups',
+        Transactions: 'transactions',
+        Customers: 'customers',
     };
 }
 
@@ -104,10 +108,10 @@ export abstract class FirestoreObject {
         this.id = id;
         // Easier testing
         if ((props.coll || props.collection) && process.env.NODE_ENV !== 'production') {
-            this.collection = (): string => props.coll || props.collection;
+            this.collection = (): string => props.coll || props.collection || this.collection();
         }
         this.coll = this.collection();
-        this.db = db;
+        this.db = db || Database.firebase;
         for (const [key, val] of Object.entries(data)) {
             this[key] = val;
         }

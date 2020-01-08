@@ -1,8 +1,15 @@
 import { FirestoreObjectConfig, FirestoreObject, Firebase } from '../agents/firebase';
 import { FlightStops } from './search';
 import { Database } from '../database';
+import { Airport } from './airport';
 
-interface TripQuery {
+export interface TripGroupFields extends FirestoreObjectConfig {
+    query: TripGroupQuery;
+    status: TripGroupProcStatus;
+    providers: TripGroupProviders;
+}
+
+export interface TripGroupQuery {
     origin: string;
     dest: string;
     departDate: string | Date;
@@ -11,88 +18,93 @@ interface TripQuery {
     stops: FlightStops | string | number;
 }
 
-interface TripProviders {
-    [searchProvider: string]: ProviderResults;
-}
-
-/** Interface for results from scraper */
-export interface ProviderResults {
-    /** Data scraped from Url */
-    data: ProviderData[];
-    /** Url that was scraped */
-    url: string;
-}
-
-export interface ProviderData {
-    airline: string;
-    duration: string;
-    layovers: string[]; // Tentative
-    price: number;
-    stops: FlightStops | string | number;
-    times: string | string[]; // Tentative -- map airport to times{arrival, depart}?
-    /** Search Provider (aka scraping module) */
-    provider: SearchProviders;
-}
-
 /** Processing Status */
-enum TripProcStatus {
+export enum TripGroupProcStatus {
     /** Waiting in Queue */
     Waiting,
     /** Currently being processed */
     InProgress,
     /** Processing Canceled */
     Cancelled,
-    /** All conditions and subcomponents of the Trip have been satisfied:
+    /** All conditions and subcomponents of the TripGroup have been satisfied:
      *
      * - Each search provider was scraped
      */
     Done,
 }
 
+export interface TripGroupProviders {
+    [searchProvider: string]: ProviderResults;
+}
+
+/** Interface for results from scraper */
+export interface ProviderResults {
+    /** trips scraped from Url */
+    data: Trip[];
+    /** Url that was scraped */
+    url: string;
+}
+
+export interface Trip {
+    price: number;
+    /** Should be in order of arrival
+     *
+     * e.g origin should be first stop,
+     * destination should be last,
+     * with layovers in between
+     */
+    stops: TripStop[];
+    /** Search Provider (aka scraping module) */
+    provider: SearchProviders;
+}
+
+export interface TripStop {
+    stop: Airport;
+    operator: string;
+    flightNum: string;
+    arrivalTime: string;
+    departTime: string;
+    duration: string;
+}
+
 /** Search Providers enabled
  *
  * Key is scraper module
  *
- * Value is key of scraper results in Trip object
+ * Value is key of scraper results in TripGroup object
  */
 export enum SearchProviders {
     GoogleFlights = 'google',
 }
 
-export interface TripFields extends FirestoreObjectConfig {
-    query: TripQuery;
-    status: TripProcStatus;
-    providers: TripProviders;
-}
-
-export class Trip extends FirestoreObject implements TripFields {
-    readonly query: TripQuery;
-    readonly status: TripProcStatus;
-    readonly providers: TripProviders;
+export class TripGroup extends FirestoreObject implements TripGroupFields {
+    readonly query: TripGroupQuery;
+    readonly status: TripGroupProcStatus;
+    readonly providers: TripGroupProviders;
 
     private readonly comparePriceAsc = (a, b) => a.price - b.price;
 
     private static readonly defaultDb = Database.firebase;
-    private static readonly Collection = Firebase.Collections.Trips;
+    private static readonly Collection = Firebase.Collections.TripGroups;
 
-    constructor(props: TripFields) {
+    constructor(props: TripGroupFields) {
         super(props);
-        this.db = props.db || Trip.defaultDb;
+        this.db = props.db || TripGroup.defaultDb;
     }
 
-    collection = (): string => Trip.Collection;
+    collection = (): string => TripGroup.Collection;
 
     isDone(): boolean {
-        const tripProviders = Object.keys(this.providers);
+        const TripGroupProviders = Object.keys(this.providers);
         const searchProviders = Object.keys(SearchProviders);
 
         // Each Search Provider has been scraped
-        return searchProviders.every(prov => tripProviders.includes(prov));
+        return searchProviders.every(prov => TripGroupProviders.includes(prov));
     }
 
-    // TODO inverse dependency flow for testing? It's 2 AM I might be tripping
+    // TODO inverse dependency flow for testing? It's 2 AM I might be TripGroupping
 
-    sortByPriceAsc(): Array<ProviderData> {
+    sortByPriceAsc(): Array<Trip> {
         // TODO implement
         const options = [];
         // Aggregate all entries
@@ -102,13 +114,13 @@ export class Trip extends FirestoreObject implements TripFields {
         return options.sort(this.comparePriceAsc);
     }
 
-    bestTrip = (): ProviderData => this.sortByPriceAsc()[0];
+    bestTrip = (): Trip => this.sortByPriceAsc()[0];
 
-    bestTripFrom(provider: SearchProviders): ProviderData {
+    bestTripFrom(provider: SearchProviders): Trip {
         return this.providers[provider].data.sort(this.comparePriceAsc)[0];
     }
 
-    benchmarkTrip(): ProviderData {
+    benchmarkTrip(): Trip {
         // TODO returns lowest google price
         // implement failure case
         return this.bestTripFrom(SearchProviders.GoogleFlights);
