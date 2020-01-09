@@ -90,7 +90,7 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
     private static readonly defaultDb = Database.firebase;
 
     static readonly Collection = Firebase.Collections.TripGroups;
-    static readonly SortPriceAsc = (a: Trip, b: Trip) => a.price - b.price;
+    static readonly SortPriceAsc = (a: Trip, b: Trip): number => a.price - b.price;
 
     collection = (): string => TripGroup.Collection;
 
@@ -103,7 +103,7 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
      * Step 1: Start scraping trips
      * @param queue
      */
-    async startScraping(queue: Queue<TripScraperQuery>) {
+    async startScraping(queue: Queue<TripScraperQuery>): Promise<TripGroup> {
         const tripsToScrape: TripScraperQuery[] = [];
         for (const [, provider] of Object.entries(SearchProviders)) {
             tripsToScrape.push({

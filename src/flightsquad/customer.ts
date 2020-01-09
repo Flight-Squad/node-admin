@@ -27,8 +27,25 @@ export class Customer extends FirestoreObject implements CustomerFields {
     readonly messaging: CustomerMessagingIds;
     collection = (): string => Firebase.Collections.Customers;
 
-    static createNewCustomer(): Customer {
+    constructor(props: CustomerFields) {
+        super(props);
+    }
+
+    /**
+     * Returns a customer with unique id and empty fields
+     *
+     * Does ***not*** add customer database
+     * @param db
+     */
+    static createNewCustomer(db: Firebase): Customer {
         // TODO implement
-        return null;
+        return new Customer({
+            id: '',
+            firstName: '',
+            lastName: '',
+            dob: '',
+            stripe: '',
+            db,
+        });
     }
 }

@@ -1,4 +1,4 @@
-import { FirestoreObjectConfig, FirestoreObject } from '../agents/firebase';
+import { FirestoreObjectConfig, FirestoreObject, Firebase } from '../agents/firebase';
 export interface CustomerFields extends FirestoreObjectConfig {
     id: string;
     firstName: string;
@@ -21,5 +21,12 @@ export declare class Customer extends FirestoreObject implements CustomerFields 
     readonly stripe: string;
     readonly messaging: CustomerMessagingIds;
     collection: () => string;
-    static createNewCustomer(): Customer;
+    constructor(props: CustomerFields);
+    /**
+     * Returns a customer with unique id and empty fields
+     *
+     * Does ***not*** add customer database
+     * @param db
+     */
+    static createNewCustomer(db: Firebase): Customer;
 }
