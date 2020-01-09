@@ -12,7 +12,7 @@
     "debug": "node --inspect -r ts-node/register -r dotenv/config",
     "debug:break": "node --inspect-brk -r ts-node/register -r dotenv/config",
     "test": "echo \"Success: no test specified\" && exit 0",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix ./src/**/*.ts"
   },
   "repository": {
     "type": "git",
