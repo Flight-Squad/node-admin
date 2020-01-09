@@ -17,6 +17,9 @@ enum TransactionStatus {
     Failed,
 }
 
+/**
+ * Make a transaction and use it to send follow up message to customer
+ */
 export class Transaction extends FirestoreObject implements TransactionFields {
     readonly status: TransactionStatus;
     readonly amount: number;

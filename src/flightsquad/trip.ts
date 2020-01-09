@@ -2,11 +2,15 @@ import { FirestoreObjectConfig, FirestoreObject, Firebase } from '../agents/fire
 import { FlightStops } from './search';
 import { Database } from '../database';
 import { Airport } from './airport';
+import { Queue } from '../queue';
+import { TripScraperQuery } from './scraper';
 
 export interface TripGroupFields extends FirestoreObjectConfig {
     query: TripGroupQuery;
     status: TripGroupProcStatus;
     providers: TripGroupProviders;
+    /** The search this Trip Group belongs to */
+    searchId: string;
 }
 
 export interface TripGroupQuery {
@@ -81,19 +85,49 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
     readonly query: TripGroupQuery;
     readonly status: TripGroupProcStatus;
     readonly providers: TripGroupProviders;
-
-    private readonly comparePriceAsc = (a, b) => a.price - b.price;
+    readonly searchId: string;
 
     private static readonly defaultDb = Database.firebase;
-    private static readonly Collection = Firebase.Collections.TripGroups;
+
+    static readonly Collection = Firebase.Collections.TripGroups;
+    static readonly SortPriceAsc = (a: Trip, b: Trip) => a.price - b.price;
+
+    collection = (): string => TripGroup.Collection;
 
     constructor(props: TripGroupFields) {
         super(props);
         this.db = props.db || TripGroup.defaultDb;
     }
 
-    collection = (): string => TripGroup.Collection;
+    /**
+     * Step 1: Start scraping trips
+     * @param queue
+     */
+    async startScraping(queue: Queue<TripScraperQuery>) {
+        const tripsToScrape: TripScraperQuery[] = [];
+        for (const [, provider] of Object.entries(SearchProviders)) {
+            tripsToScrape.push({
+                ...this.query,
+                provider,
+                group: this.id,
+            });
+        }
+        await queue.pushAll(tripsToScrape);
+        return this.updateStatus(TripGroupProcStatus.InProgress);
+    }
 
+    /**
+     * Step 2: Add provider results
+     * @param provider
+     * @param results
+     */
+    addProvider(provider: SearchProviders, results: ProviderResults): Promise<TripGroup> {
+        return this.updateDoc({ [provider]: results }, TripGroup);
+    }
+
+    /**
+     * Step 3: Check for completion
+     */
     isDone(): boolean {
         const TripGroupProviders = Object.keys(this.providers);
         const searchProviders = Object.keys(SearchProviders);
@@ -102,6 +136,11 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
         return searchProviders.every(prov => TripGroupProviders.includes(prov));
     }
 
+    /**
+     * Step 4: Update status and add to Flight Search
+     */
+    updateStatus = (status: TripGroupProcStatus): Promise<TripGroup> => this.updateDoc({ status }, TripGroup);
+
     // CONSIDER inverse dependency flow for testing?
     sortByPriceAsc(): Array<Trip> {
         const options = [];
@@ -109,18 +148,17 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
         for (const [, val] of Object.entries(this.providers)) {
             options.push(val.data);
         }
-        return options.sort(this.comparePriceAsc);
+        return options.sort(TripGroup.SortPriceAsc);
     }
 
     bestTrip = (): Trip => this.sortByPriceAsc()[0];
 
     bestTripFrom(provider: SearchProviders): Trip {
-        return this.providers[provider].data.sort(this.comparePriceAsc)[0];
+        return this.providers[provider].data.sort(TripGroup.SortPriceAsc)[0];
     }
 
     benchmarkTrip(): Trip {
         // TODO implement failure case
-
         // returns lowest google price
         return this.bestTripFrom(SearchProviders.GoogleFlights);
     }

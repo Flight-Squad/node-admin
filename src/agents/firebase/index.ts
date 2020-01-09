@@ -3,6 +3,7 @@ import fs from 'fs';
 import { ConfigFunc } from '../../entity';
 import { DbImplementation } from '../../database/interfaces';
 import { Database } from '../../database';
+import uuidv4 from 'uuid/v4';
 
 export class Firebase implements DbImplementation {
     readonly firebase: admin.database.Database;
@@ -105,7 +106,7 @@ export abstract class FirestoreObject {
 
     constructor(props: FirestoreObjectConfig) {
         const { id, db, ...data } = props;
-        this.id = id;
+        this.id = id || uuidv4();
         // Easier testing
         if ((props.coll || props.collection) && process.env.NODE_ENV !== 'production') {
             this.collection = (): string => props.coll || props.collection || this.collection();
