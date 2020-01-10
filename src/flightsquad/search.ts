@@ -31,15 +31,18 @@ export interface FlightSearchMeta {
     platform: string;
 }
 
-export interface FlightSearchFields extends FirestoreObjectConfig {
+export interface FlightSearchFields extends FirestoreObjectConfig, FlightSearchQueryFields {
+    status: FlightSearchStatus;
+    meta: FlightSearchMeta;
+}
+
+export interface FlightSearchQueryFields {
     origins: string[];
     dests: string[];
     departDates: string[] | Date[];
     returnDates?: string[] | Date[];
     isRoundTrip: boolean;
-    status: FlightSearchStatus;
     stops: string | number | FlightStops;
-    meta: FlightSearchMeta;
 }
 
 /**
@@ -69,8 +72,27 @@ export class FlightSearch extends FirestoreObject implements FlightSearchFields 
     }
 
     /**
-     * Step 1:
-     * Start search for flights
+     * Creates a Flight Search
+     *
+     * Does not write to db
+     * @param query
+     * @param meta
+     * @param db
+     */
+    static make(query: FlightSearchQueryFields, meta: FlightSearchMeta, db: Firebase): FlightSearch {
+        return new FlightSearch({
+            ...query,
+            db,
+            id: '', // autogenerate
+            status: FlightSearchStatus.Requested,
+            meta,
+        });
+    }
+
+    /**
+     * Pre-Condition: this search has been added to database
+     *
+     * Step 1: Start search for flights
      * @param queue Queue to add scraping requests to
      */
     async start(queue: Queue<TripScraperQuery>): Promise<FlightSearch> {

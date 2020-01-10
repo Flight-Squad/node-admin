@@ -1,4 +1,7 @@
 import { FirestoreObjectConfig, FirestoreObject, Firebase } from '../agents/firebase';
+import { FlightSearch, FlightSearchQueryFields } from './search';
+import { Queue } from '../queue';
+import { TripScraperQuery } from './scraper';
 
 export interface CustomerFields extends FirestoreObjectConfig {
     id: string;
@@ -8,9 +11,14 @@ export interface CustomerFields extends FirestoreObjectConfig {
     email?: string;
     /** stripe customer id */
     stripe: string;
+    searches: CustomerSearches;
     messaging?: CustomerMessagingIds;
 
     // TODO link searches and transactions
+}
+
+export interface CustomerSearches {
+    [id: string]: unknown;
 }
 
 export interface CustomerMessagingIds {
@@ -24,12 +32,34 @@ export class Customer extends FirestoreObject implements CustomerFields {
     readonly lastName: string;
     readonly dob: string;
     readonly stripe: string;
+    readonly searches: CustomerSearches;
     readonly messaging: CustomerMessagingIds;
     static readonly Collection = Firebase.Collections.Customers;
     collection = (): string => Customer.Collection;
 
-    constructor(props: CustomerFields) {
-        super(props);
+    /**
+     * Starts a search for the query
+     * @param query
+     * @param queue To handle long-running jobs
+     * @param meta Where and how the query was made
+     */
+    async requestSearch(
+        query: FlightSearchQueryFields,
+        queue: Queue<TripScraperQuery>,
+        meta: { session: string; platform: string },
+    ): Promise<Customer> {
+        let search = await FlightSearch.make(query, { ...meta, customer: this.id }, this.db).createDoc();
+        search = await search.start(queue);
+        return this.addSearch(search);
+    }
+
+    /**
+     * Adds record of search to customer info
+     * @param search
+     */
+    addSearch(search: FlightSearch): Promise<Customer> {
+        this.searches[search.id] = {};
+        return this.updateDoc({ searches: this.searches }, Customer);
     }
 
     /**
@@ -46,6 +76,7 @@ export class Customer extends FirestoreObject implements CustomerFields {
             lastName: '',
             dob: '',
             stripe: '',
+            searches: {},
             db,
         });
     }
@@ -76,9 +107,14 @@ export class Customer extends FirestoreObject implements CustomerFields {
                 messaging: {
                     [platform]: id,
                 },
+                searches: {},
             });
         }
         // Customer is first doc that matches platform id
         return db.find(Customer.Collection, customerQuery.docs[0].id, Customer);
+    }
+
+    constructor(props: CustomerFields) {
+        super(props);
     }
 }
