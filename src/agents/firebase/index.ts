@@ -42,7 +42,7 @@ export class Firebase implements DbImplementation {
 
     readonly create = this.update;
 
-    async update(coll: string, id: string, data) {
+    async update(coll: string, id: string, data): Promise<{ coll: string; id: string; data }> {
         const ref = this.docRef({ coll, id });
         await this.mergeSet(ref, data);
         return { coll, id, data };
@@ -55,7 +55,7 @@ export class Firebase implements DbImplementation {
         return snapshot.exists ? new clAss({ coll, id, ...snapshot.data }) : null;
     }
 
-    async delete(coll: string, id: string, preCondition?) {
+    async delete(coll: string, id: string, preCondition?): Promise<firestore.WriteResult> {
         return this.docRef({ coll, id }).delete(preCondition);
     }
 
@@ -122,7 +122,9 @@ export abstract class FirestoreObject {
     abstract collection(): string;
 
     /** Returns object with extraneous fields ommitted */
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     data() {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, coll, db, collection, refresh, updateDoc, createDoc, deleteDoc, data, ...info } = this;
         return info;
     }
@@ -149,12 +151,12 @@ export abstract class FirestoreObject {
         return new clAss({ id: this.id, db: this.db, ...data });
     }
 
-    async createDoc() {
+    async createDoc(): Promise<this> {
         await this.db.update(this.coll, this.id, this.data());
         return this;
     }
 
-    async deleteDoc() {
+    async deleteDoc(): Promise<boolean> {
         await this.db.delete(this.coll, this.id);
         return true;
     }
