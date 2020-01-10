@@ -1,4 +1,4 @@
-import { FirestoreObject, FirestoreObjectConfig } from '../agents/firebase';
+import { Firebase, FirestoreObject, FirestoreObjectConfig } from '../agents/firebase';
 import { Queue } from '../queue';
 import { Trip } from './trip';
 import { TripScraperQuery } from './scraper';
@@ -25,15 +25,17 @@ export interface FlightSearchMeta {
      */
     platform: string;
 }
-export interface FlightSearchFields extends FirestoreObjectConfig {
+export interface FlightSearchFields extends FirestoreObjectConfig, FlightSearchQueryFields {
+    status: FlightSearchStatus;
+    meta: FlightSearchMeta;
+}
+export interface FlightSearchQueryFields {
     origins: string[];
     dests: string[];
     departDates: string[] | Date[];
     returnDates?: string[] | Date[];
     isRoundTrip: boolean;
-    status: FlightSearchStatus;
     stops: string | number | FlightStops;
-    meta: FlightSearchMeta;
 }
 /**
  * Immutable object representing a flight search
@@ -54,8 +56,18 @@ export declare class FlightSearch extends FirestoreObject implements FlightSearc
     collection: () => string;
     constructor(props: FlightSearchFields);
     /**
-     * Step 1:
-     * Start search for flights
+     * Creates a Flight Search
+     *
+     * Does not write to db
+     * @param query
+     * @param meta
+     * @param db
+     */
+    static make(query: FlightSearchQueryFields, meta: FlightSearchMeta, db: Firebase): FlightSearch;
+    /**
+     * Pre-Condition: this search has been added to database
+     *
+     * Step 1: Start search for flights
      * @param queue Queue to add scraping requests to
      */
     start(queue: Queue<TripScraperQuery>): Promise<FlightSearch>;

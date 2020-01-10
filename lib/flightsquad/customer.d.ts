@@ -1,4 +1,7 @@
 import { FirestoreObjectConfig, FirestoreObject, Firebase } from '../agents/firebase';
+import { FlightSearch, FlightSearchQueryFields } from './search';
+import { Queue } from '../queue';
+import { TripScraperQuery } from './scraper';
 export interface CustomerFields extends FirestoreObjectConfig {
     id: string;
     firstName: string;
@@ -7,7 +10,11 @@ export interface CustomerFields extends FirestoreObjectConfig {
     email?: string;
     /** stripe customer id */
     stripe: string;
+    searches: CustomerSearches;
     messaging?: CustomerMessagingIds;
+}
+export interface CustomerSearches {
+    [id: string]: unknown;
 }
 export interface CustomerMessagingIds {
     /** Map messaging platforms the user uses to their ids on that platform */
@@ -19,10 +26,25 @@ export declare class Customer extends FirestoreObject implements CustomerFields 
     readonly lastName: string;
     readonly dob: string;
     readonly stripe: string;
+    readonly searches: CustomerSearches;
     readonly messaging: CustomerMessagingIds;
     static readonly Collection: string;
     collection: () => string;
-    constructor(props: CustomerFields);
+    /**
+     * Starts a search for the query
+     * @param query
+     * @param queue To handle long-running jobs
+     * @param meta Where and how the query was made
+     */
+    requestSearch(query: FlightSearchQueryFields, queue: Queue<TripScraperQuery>, meta: {
+        session: string;
+        platform: string;
+    }): Promise<Customer>;
+    /**
+     * Adds record of search to customer info
+     * @param search
+     */
+    addSearch(search: FlightSearch): Promise<Customer>;
     /**
      * Returns a customer with unique id and empty fields
      *
@@ -41,4 +63,5 @@ export declare class Customer extends FirestoreObject implements CustomerFields 
      * @param id
      */
     static fromMessaging(db: Firebase, platform: string, id: string): Promise<Customer>;
+    constructor(props: CustomerFields);
 }
