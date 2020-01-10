@@ -3,11 +3,11 @@ import uuidv4 from 'uuid/v4';
 import { Queue } from '../../queue';
 
 export class SqsQueue<T> implements Queue<T> {
-    push(data: T) {
+    push(data: T): void | never {
         return this.pushAll([data]);
     }
 
-    pushAll(data: T[]) {
+    pushAll(data: T[]): void | never {
         const params = {
             Entries: [],
             QueueUrl: this.queueUrl,
