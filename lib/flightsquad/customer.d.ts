@@ -20,6 +20,7 @@ export declare class Customer extends FirestoreObject implements CustomerFields 
     readonly dob: string;
     readonly stripe: string;
     readonly messaging: CustomerMessagingIds;
+    static readonly Collection: string;
     collection: () => string;
     constructor(props: CustomerFields);
     /**
@@ -29,4 +30,15 @@ export declare class Customer extends FirestoreObject implements CustomerFields 
      * @param db
      */
     static createNewCustomer(db: Firebase): Customer;
+    /**
+     * Finds a customer based on messaging platform and id.
+     *
+     * If no existing customer is found, an object representing a new customer is returned
+     *
+     * Does not write to `db`.
+     * @param db
+     * @param platform
+     * @param id
+     */
+    static fromMessaging(db: Firebase, platform: string, id: string): Promise<Customer>;
 }

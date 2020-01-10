@@ -25,7 +25,8 @@ export class Customer extends FirestoreObject implements CustomerFields {
     readonly dob: string;
     readonly stripe: string;
     readonly messaging: CustomerMessagingIds;
-    collection = (): string => Firebase.Collections.Customers;
+    static readonly Collection = Firebase.Collections.Customers;
+    collection = (): string => Customer.Collection;
 
     constructor(props: CustomerFields) {
         super(props);
@@ -47,5 +48,37 @@ export class Customer extends FirestoreObject implements CustomerFields {
             stripe: '',
             db,
         });
+    }
+
+    /**
+     * Finds a customer based on messaging platform and id.
+     *
+     * If no existing customer is found, an object representing a new customer is returned
+     *
+     * Does not write to `db`.
+     * @param db
+     * @param platform
+     * @param id
+     */
+    static async fromMessaging(db: Firebase, platform: string, id: string): Promise<Customer> {
+        const customerQuery = await db.firestore
+            .collection(Customer.Collection)
+            .where(`messaging.${platform}`, '==', id)
+            .get();
+        if (customerQuery.empty) {
+            return new Customer({
+                id: '',
+                firstName: '',
+                lastName: '',
+                dob: '',
+                stripe: '',
+                db,
+                messaging: {
+                    [platform]: id,
+                },
+            });
+        }
+        // Customer is first doc that matches platform id
+        return db.find(Customer.Collection, customerQuery.docs[0].id, Customer);
     }
 }
