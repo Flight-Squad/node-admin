@@ -52,7 +52,7 @@ export declare class FlightSearch extends FirestoreObject implements FlightSearc
     readonly meta: FlightSearchMeta;
     readonly tripGroups: string[];
     private static readonly db;
-    private static readonly Collection;
+    static readonly Collection: string;
     collection: () => string;
     constructor(props: FlightSearchFields);
     /**

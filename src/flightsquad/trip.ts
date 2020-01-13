@@ -1,5 +1,5 @@
 import { FirestoreObjectConfig, FirestoreObject, Firebase } from '../agents/firebase';
-import { FlightStops } from './search';
+import { FlightStops, FlightSearch } from './search';
 import { Database } from '../database';
 import { Airport } from './airport';
 import { Queue } from '../queue';
@@ -137,8 +137,23 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
     }
 
     /**
-     * Step 4: Update status and add to Flight Search
+     * Step 4: Mark Trip Group as finished
+     *
+     * Returns the `FlightSearch` that this trip group is a part of
+     *
+     * Returns `null` if the trip group isn't done yet.
      */
+    async finish(): Promise<FlightSearch> {
+        if (this.isDone()) {
+            // Update Status
+            await this.updateStatus(TripGroupProcStatus.Done);
+            // Mark as finished in parent search
+            const search = await this.db.find(FlightSearch.Collection, this.searchId, FlightSearch);
+            return search.completeTripGroup(this.id);
+        }
+        return null;
+    }
+
     updateStatus = (status: TripGroupProcStatus): Promise<TripGroup> => this.updateDoc({ status }, TripGroup);
 
     // CONSIDER inverse dependency flow for testing?

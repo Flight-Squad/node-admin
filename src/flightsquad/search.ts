@@ -62,7 +62,7 @@ export class FlightSearch extends FirestoreObject implements FlightSearchFields 
 
     private static readonly db = Database.firebase;
 
-    private static readonly Collection = Firebase.Collections.Searches;
+    static readonly Collection = Firebase.Collections.Searches;
     collection = (): string => FlightSearch.Collection;
 
     constructor(props: FlightSearchFields) {

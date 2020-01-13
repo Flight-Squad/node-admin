@@ -1,5 +1,5 @@
 import { FirestoreObjectConfig, FirestoreObject } from '../agents/firebase';
-import { FlightStops } from './search';
+import { FlightStops, FlightSearch } from './search';
 import { Airport } from './airport';
 import { Queue } from '../queue';
 import { TripScraperQuery } from './scraper';
@@ -97,8 +97,13 @@ export declare class TripGroup extends FirestoreObject implements TripGroupField
      */
     isDone(): boolean;
     /**
-     * Step 4: Update status and add to Flight Search
+     * Step 4: Mark Trip Group as finished
+     *
+     * Returns the `FlightSearch` that this trip group is a part of
+     *
+     * Returns `null` if the trip group isn't done yet.
      */
+    finish(): Promise<FlightSearch>;
     updateStatus: (status: TripGroupProcStatus) => Promise<TripGroup>;
     sortByPriceAsc(): Array<Trip>;
     bestTrip: () => Trip;
