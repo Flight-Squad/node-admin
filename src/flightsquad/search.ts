@@ -119,7 +119,8 @@ export class FlightSearch extends FirestoreObject implements FlightSearchFields 
      */
     completeTripGroup(id: string): Promise<FlightSearch> {
         this.tripGroups.push(id);
-        return this.updateDoc({ tripGroups: this.tripGroups }, FlightSearch);
+        debug('completing trip %o', { trip: id, tripGroups: this.tripGroups });
+        return this.updateDoc({}, FlightSearch);
     }
 
     /**
