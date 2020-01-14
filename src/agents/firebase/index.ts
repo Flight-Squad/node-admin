@@ -52,7 +52,7 @@ export class Firebase implements DbImplementation {
         const ref = this.docRef({ coll, id });
         const snapshot = await ref.get();
         // Have to return null as alternative because typescript won't let me return a boolean
-        return snapshot.exists ? new clAss({ coll, id, ...snapshot.data }) : null;
+        return snapshot.exists ? new clAss({ coll, id, ...snapshot.data, db: this }) : null;
     }
 
     async delete(coll: string, id: string, preCondition?): Promise<firestore.WriteResult> {
