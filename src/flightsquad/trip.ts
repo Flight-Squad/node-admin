@@ -126,7 +126,7 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
      * @param results
      */
     addProvider(provider: SearchProviders, results: ProviderResults): Promise<TripGroup> {
-        return this.updateDoc({ [provider]: results }, TripGroup);
+        return this.updateDoc({ providers: { [provider]: results } }, TripGroup);
     }
 
     /**
