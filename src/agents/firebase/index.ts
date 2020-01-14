@@ -167,3 +167,21 @@ export interface FirestoreObjectConfig {
     // eslint-disable-next-line
     [field: string]: any;
 }
+
+/**
+ * Represents a Firebase Document
+ */
+export class FirebaseDoc {
+    protected data;
+    protected ref;
+    constructor(path: string, db: Firebase) {
+        this.ref = db.firebase.ref(path);
+    }
+
+    loaded = (): boolean => Boolean(this.data);
+
+    async load(reference?): Promise<void> {
+        const ref = reference || this.ref;
+        this.data = (await ref.once('value')).val();
+    }
+}

@@ -75,3 +75,13 @@ export interface FirestoreObjectConfig {
     db: Firebase;
     [field: string]: any;
 }
+/**
+ * Represents a Firebase Document
+ */
+export declare class FirebaseDoc {
+    protected data: any;
+    protected ref: any;
+    constructor(path: string, db: Firebase);
+    loaded: () => boolean;
+    load(reference?: any): Promise<void>;
+}
