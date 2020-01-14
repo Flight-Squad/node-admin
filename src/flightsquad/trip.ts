@@ -4,6 +4,9 @@ import { Database } from '../database';
 import { Airport } from './airport';
 import { Queue } from '../queue';
 import { TripScraperQuery } from './scraper';
+import { createFlightSquadDebugger } from '../debugger';
+
+const debug = createFlightSquadDebugger('trip');
 
 export interface TripGroupFields extends FirestoreObjectConfig {
     query: TripGroupQuery;
@@ -97,6 +100,7 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
     constructor(props: TripGroupFields) {
         super(props);
         this.db = props.db || TripGroup.defaultDb;
+        debug('Instantiated Trip Group %O', this.data());
     }
 
     /**

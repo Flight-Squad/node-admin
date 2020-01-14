@@ -72,9 +72,9 @@ export class FlightSearch extends FirestoreObject implements FlightSearchFields 
         super(props);
         this.db = props.db || FlightSearch.db;
         this.returnDates = this.returnDates || []; // To avoid leaving returnDates undefined
-        debug('Instantiated Flight Search %O', this.data());
         this.numTrips =
             this.origins.length * this.dests.length * this.departDates.length * (this.returnDates.length || 1);
+        debug('Instantiated Flight Search %O', this.data());
     }
 
     /**
