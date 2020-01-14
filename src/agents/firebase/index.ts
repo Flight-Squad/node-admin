@@ -4,9 +4,9 @@ import { ConfigFunc } from '../../entity';
 import { DbImplementation } from '../../database/interfaces';
 import { Database } from '../../database';
 import uuidv4 from 'uuid/v4';
-import { createFlightSquadDebugger } from '../../debugger';
+// import { createFlightSquadDebugger } from '../../debugger';
 
-const debug = createFlightSquadDebugger('database');
+// const debug = createFlightSquadDebugger('database');
 
 export class Firebase implements DbImplementation {
     readonly firebase: admin.database.Database;
@@ -149,12 +149,6 @@ export abstract class FirestoreObject {
      */
     async updateDoc<T extends FirestoreObject>(data, clAss: new (props) => T): Promise<T> {
         await this.db.update(this.collection(), this.id, data);
-        debug('on updateDoc, instantiating new class with props: %O', {
-            id: this.id,
-            db: this.db,
-            ...this.data(),
-            ...data,
-        });
         return new clAss({ id: this.id, db: this.db, ...this.data(), ...data });
     }
 
