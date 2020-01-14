@@ -146,7 +146,7 @@ export abstract class FirestoreObject {
      */
     async updateDoc<T extends FirestoreObject>(data, clAss: new (props) => T): Promise<T> {
         await this.db.update(this.collection(), this.id, data);
-        return new clAss({ id: this.id, db: this.db, ...data });
+        return new clAss({ id: this.id, db: this.db, ...this.data() });
     }
 
     async createDoc(): Promise<this> {
