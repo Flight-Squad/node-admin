@@ -53,7 +53,7 @@ export declare abstract class FirestoreObject {
     /** Refers to the firestore collection of the object */
     abstract collection(): string;
     /** Returns object with extraneous fields ommitted */
-    data(): Pick<this, Exclude<keyof this, "id" | "data" | "db" | "collection" | "refresh" | "updateDoc" | "createDoc" | "deleteDoc">>;
+    data(): any;
     /**
      * Returns instance of class passed in
      *

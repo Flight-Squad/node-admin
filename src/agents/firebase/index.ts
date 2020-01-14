@@ -122,9 +122,7 @@ export abstract class FirestoreObject {
     /** Returns object with extraneous fields ommitted */
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     data() {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, db, collection, refresh, updateDoc, createDoc, deleteDoc, data, ...info } = this;
-        return info;
+        return JSON.parse(JSON.stringify(this));
     }
 
     /**
