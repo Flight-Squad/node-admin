@@ -48,13 +48,12 @@ export interface FirebaseConfig {
 }
 export declare abstract class FirestoreObject {
     id: string;
-    coll: string;
     db: Firebase;
     constructor(props: FirestoreObjectConfig);
     /** Refers to the firestore collection of the object */
     abstract collection(): string;
     /** Returns object with extraneous fields ommitted */
-    data(): Pick<this, Exclude<keyof this, "id" | "data" | "coll" | "db" | "collection" | "refresh" | "updateDoc" | "createDoc" | "deleteDoc">>;
+    data(): Pick<this, Exclude<keyof this, "id" | "data" | "db" | "collection" | "refresh" | "updateDoc" | "createDoc" | "deleteDoc">>;
     /**
      * Returns instance of class passed in
      *

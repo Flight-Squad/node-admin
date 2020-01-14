@@ -101,7 +101,6 @@ export interface FirebaseConfig {
 
 export abstract class FirestoreObject {
     id: string;
-    coll: string;
     db: Firebase;
 
     constructor(props: FirestoreObjectConfig) {
@@ -111,7 +110,6 @@ export abstract class FirestoreObject {
         if ((props.coll || props.collection) && process.env.NODE_ENV !== 'production') {
             this.collection = (): string => props.coll || props.collection || this.collection();
         }
-        this.coll = this.collection();
         this.db = db || Database.firebase;
         for (const [key, val] of Object.entries(data)) {
             this[key] = val;
@@ -125,7 +123,7 @@ export abstract class FirestoreObject {
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     data() {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, coll, db, collection, refresh, updateDoc, createDoc, deleteDoc, data, ...info } = this;
+        const { id, db, collection, refresh, updateDoc, createDoc, deleteDoc, data, ...info } = this;
         return info;
     }
 
@@ -136,7 +134,7 @@ export abstract class FirestoreObject {
      * @param clAss
      */
     refresh<T extends FirestoreObject>(clAss: new (props) => T): Promise<T> {
-        return this.db.find(this.coll, this.id, clAss);
+        return this.db.find(this.collection(), this.id, clAss);
     }
 
     // FUCD methods -- see Firebase object for
@@ -147,17 +145,17 @@ export abstract class FirestoreObject {
      * @param clAss Class to return an instance of
      */
     async updateDoc<T extends FirestoreObject>(data, clAss: new (props) => T): Promise<T> {
-        await this.db.update(this.coll, this.id, data);
+        await this.db.update(this.collection(), this.id, data);
         return new clAss({ id: this.id, db: this.db, ...data });
     }
 
     async createDoc(): Promise<this> {
-        await this.db.update(this.coll, this.id, this.data());
+        await this.db.update(this.collection(), this.id, this.data());
         return this;
     }
 
     async deleteDoc(): Promise<boolean> {
-        await this.db.delete(this.coll, this.id);
+        await this.db.delete(this.collection(), this.id);
         return true;
     }
 }
