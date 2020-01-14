@@ -134,7 +134,7 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
      */
     isDone(): boolean {
         const TripGroupProviders = Object.keys(this.providers);
-        const searchProviders = Object.keys(SearchProviders);
+        const searchProviders = Object.values(SearchProviders);
 
         // Each Search Provider has been scraped
         return searchProviders.every(prov => TripGroupProviders.includes(prov));
