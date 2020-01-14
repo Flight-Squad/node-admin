@@ -2,6 +2,9 @@ import { FirestoreObjectConfig, FirestoreObject, Firebase } from '../agents/fire
 import { FlightSearch, FlightSearchQueryFields } from './search';
 import { Queue } from '../queue';
 import { TripScraperQuery } from './scraper';
+// import { createFlightSquadDebugger } from '../debugger';
+
+// const debug = createFlightSquadDebugger('customer');
 
 export interface CustomerFields extends FirestoreObjectConfig {
     id: string;
