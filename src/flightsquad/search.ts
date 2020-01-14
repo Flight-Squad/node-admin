@@ -107,10 +107,7 @@ export class FlightSearch extends FirestoreObject implements FlightSearchFields 
         const tripGroups = await Promise.all(this.createTripGroups());
         await Promise.all(tripGroups.map(async group => group.startScraping(queue)));
         // Update status and tripGroups
-        return this.updateDoc(
-            { tripGroups: tripGroups.map(group => group.id), status: FlightSearchStatus.InProgress },
-            FlightSearch,
-        );
+        return this.updateDoc({ status: FlightSearchStatus.InProgress }, FlightSearch);
     }
 
     /**
