@@ -100,7 +100,6 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
     constructor(props: TripGroupFields) {
         super(props);
         this.db = props.db || TripGroup.defaultDb;
-        debug('Instantiated Trip Group %O', this.data());
     }
 
     /**
@@ -108,6 +107,7 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
      * @param queue
      */
     async startScraping(queue: Queue<TripScraperQuery>): Promise<TripGroup> {
+        debug('Starting Scraping: Trip Groups %s', this.id);
         const tripsToScrape: TripScraperQuery[] = [];
         for (const [, provider] of Object.entries(SearchProviders)) {
             tripsToScrape.push({
@@ -126,6 +126,7 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
      * @param results
      */
     addProvider(provider: SearchProviders, results: ProviderResults): Promise<TripGroup> {
+        debug('Adding provider %s to group %s', provider, this.id);
         return this.updateDoc({ providers: { [provider]: results } }, TripGroup);
     }
 
@@ -148,6 +149,7 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
      * Returns `null` if the trip group isn't done yet.
      */
     async finish(): Promise<FlightSearch> {
+        debug('Trying to finish group %s', this.id);
         if (this.isDone()) {
             // Update Status
             await this.updateStatus(TripGroupProcStatus.Done);
@@ -164,15 +166,16 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
     sortByPriceAsc(): Array<Trip> {
         const options = [];
         // Aggregate all entries
-        for (const [, val] of Object.entries(this.providers)) {
-            options.push(val.data);
+        for (const key of Object.keys(this.providers)) {
+            options.push(this.bestTripFrom(key));
         }
         return options.sort(TripGroup.SortPriceAsc);
     }
 
     bestTrip = (): Trip => this.sortByPriceAsc()[0];
 
-    bestTripFrom(provider: SearchProviders): Trip {
+    bestTripFrom(provider: SearchProviders | string): Trip {
+        debug('Getting best trip from %s in group %s', provider, this.id);
         return this.providers[provider].data.sort(TripGroup.SortPriceAsc)[0];
     }
 

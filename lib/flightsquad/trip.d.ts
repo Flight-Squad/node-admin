@@ -107,6 +107,6 @@ export declare class TripGroup extends FirestoreObject implements TripGroupField
     updateStatus: (status: TripGroupProcStatus) => Promise<TripGroup>;
     sortByPriceAsc(): Array<Trip>;
     bestTrip: () => Trip;
-    bestTripFrom(provider: SearchProviders): Trip;
+    bestTripFrom(provider: SearchProviders | string): Trip;
     benchmarkTrip(): Trip;
 }

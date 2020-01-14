@@ -75,7 +75,6 @@ export class FlightSearch extends FirestoreObject implements FlightSearchFields 
         this.tripGroups = this.tripGroups || [];
         this.numTrips =
             this.origins.length * this.dests.length * this.departDates.length * (this.returnDates.length || 1);
-        debug('Instantiated Flight Search %O', this.data());
     }
 
     /**
