@@ -82,6 +82,8 @@ export interface TripStop {
  */
 export enum SearchProviders {
     GoogleFlights = 'google',
+    Kayak = 'kayak',
+    Southwest = 'southwest',
 }
 
 export class TripGroup extends FirestoreObject implements TripGroupFields {

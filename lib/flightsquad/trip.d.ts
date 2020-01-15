@@ -69,7 +69,9 @@ export interface TripStop {
  * Value is key of scraper results in TripGroup object
  */
 export declare enum SearchProviders {
-    GoogleFlights = "google"
+    GoogleFlights = "google",
+    Kayak = "kayak",
+    Southwest = "southwest"
 }
 export declare class TripGroup extends FirestoreObject implements TripGroupFields {
     readonly query: TripGroupQuery;
