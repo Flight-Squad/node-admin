@@ -23,7 +23,6 @@ jobs:
                   CI: true
                   NPM_TOKEN: ${{secrets.NPM_TOKEN}}
               run: |
-                  export NPM_TOKEN=$NPM_TOKEN
                   npm ci
                   npm run build
                   npm config set //npm.pkg.github.com/:_authToken=$NPM_TOKEN
