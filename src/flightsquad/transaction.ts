@@ -25,6 +25,7 @@ export class Transaction extends FirestoreObject implements TransactionFields {
     readonly amount: number;
     readonly customer: Customer;
     readonly trip: Trip;
+    static readonly Collection = Firebase.Collections.Transactions;
 
     private static readonly defaultDb = Database.firebase;
     constructor(props: TransactionFields) {
@@ -32,5 +33,5 @@ export class Transaction extends FirestoreObject implements TransactionFields {
         this.db = props.db || Transaction.defaultDb;
     }
 
-    collection = (): string => Firebase.Collections.Transactions;
+    collection = (): string => Transaction.Collection;
 }
