@@ -21,6 +21,7 @@ export declare class Transaction extends FirestoreObject implements TransactionF
     readonly amount: number;
     readonly customer: Customer;
     readonly trip: Trip;
+    static readonly Collection: string;
     private static readonly defaultDb;
     constructor(props: TransactionFields);
     collection: () => string;
