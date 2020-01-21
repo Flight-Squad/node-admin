@@ -1,13 +1,13 @@
 import { FirestoreObject, FirestoreObjectConfig } from '../agents';
 import { Trip } from './trip';
-import { Customer } from './customer';
+import { CustomerIdentifiers } from './customer';
 export interface TransactionFields extends FirestoreObjectConfig {
     status: TransactionStatus;
     amount: number;
-    customer: Customer;
+    customer: CustomerIdentifiers;
     trip: Trip;
 }
-declare enum TransactionStatus {
+export declare enum TransactionStatus {
     Created = 0,
     Pending = 1,
     Processed = 2,
@@ -19,11 +19,10 @@ declare enum TransactionStatus {
 export declare class Transaction extends FirestoreObject implements TransactionFields {
     readonly status: TransactionStatus;
     readonly amount: number;
-    readonly customer: Customer;
+    readonly customer: CustomerIdentifiers;
     readonly trip: Trip;
     static readonly Collection: string;
     private static readonly defaultDb;
     constructor(props: TransactionFields);
     collection: () => string;
 }
-export {};

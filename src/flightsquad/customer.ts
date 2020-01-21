@@ -77,6 +77,25 @@ export class Customer extends FirestoreObject implements CustomerFields {
     }
 
     /**
+     * Returns object with only the customer's identifiers
+     */
+    identifiers(): CustomerIdentifiers {
+        const { searches, transactions, ...identifiers } = this.data();
+        return identifiers;
+    }
+
+    /**
+     * Returns object with only the customer's actions on the platform, such as:
+     * 
+     * - Searches
+     * - Transactions
+     */
+    activities(): CustomerActivities {
+        const { searches, transactions } = this.data();
+        return { searches, transactions };
+    }
+
+    /**
      * Returns a customer with unique id and empty fields
      *
      * Does ***not*** add customer database

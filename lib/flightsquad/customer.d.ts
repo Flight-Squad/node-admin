@@ -2,7 +2,14 @@ import { FirestoreObjectConfig, FirestoreObject, Firebase } from '../agents/fire
 import { FlightSearch, FlightSearchQueryFields } from './search';
 import { Queue } from '../queue';
 import { TripScraperQuery } from './scraper';
-export interface CustomerFields extends FirestoreObjectConfig {
+export interface CustomerFields extends FirestoreObjectConfig, CustomerIdentifiers, CustomerActivities {
+}
+export interface CustomerActivities {
+    searches: CustomerSearches;
+    transactions: CustomerTransactions;
+}
+export interface CustomerIdentifiers {
+    /** Empty if unknown */
     id: string;
     firstName: string;
     lastName: string;
@@ -10,10 +17,12 @@ export interface CustomerFields extends FirestoreObjectConfig {
     email?: string;
     /** stripe customer id */
     stripe: string;
-    searches: CustomerSearches;
     messaging?: CustomerMessagingIds;
 }
 export interface CustomerSearches {
+    [id: string]: unknown;
+}
+export interface CustomerTransactions {
     [id: string]: unknown;
 }
 export interface CustomerMessagingIds {
@@ -27,6 +36,7 @@ export declare class Customer extends FirestoreObject implements CustomerFields 
     readonly dob: string;
     readonly stripe: string;
     readonly searches: CustomerSearches;
+    readonly transactions: CustomerTransactions;
     readonly messaging: CustomerMessagingIds;
     static readonly Collection: string;
     collection: () => string;
@@ -45,6 +55,17 @@ export declare class Customer extends FirestoreObject implements CustomerFields 
      * @param search
      */
     addSearch(search: FlightSearch): Promise<Customer>;
+    /**
+     * Returns object with only the customer's identifiers
+     */
+    identifiers(): CustomerIdentifiers;
+    /**
+     * Returns object with only the customer's actions on the platform, such as:
+     *
+     * - Searches
+     * - Transactions
+     */
+    activities(): CustomerActivities;
     /**
      * Returns a customer with unique id and empty fields
      *

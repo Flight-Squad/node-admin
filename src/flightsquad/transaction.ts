@@ -1,13 +1,13 @@
 import { FirestoreObject, FirestoreObjectConfig, Firebase } from '../agents';
 import { Database } from '../database';
 import { Trip } from './trip';
-import { CustomerFields } from './customer';
+import { CustomerIdentifiers } from './customer';
 
 export interface TransactionFields extends FirestoreObjectConfig {
     status: TransactionStatus;
     amount: number;
     // we don't care about the customer's other seraches in a transaction, so we omit that extra data
-    customer: Omit<CustomerFields, 'searches'>;
+    customer: CustomerIdentifiers;
     trip: Trip;
 }
 
@@ -24,7 +24,7 @@ export enum TransactionStatus {
 export class Transaction extends FirestoreObject implements TransactionFields {
     readonly status: TransactionStatus;
     readonly amount: number;
-    readonly customer: CustomerFields;
+    readonly customer: CustomerIdentifiers;
     readonly trip: Trip;
     static readonly Collection = Firebase.Collections.Transactions;
 
