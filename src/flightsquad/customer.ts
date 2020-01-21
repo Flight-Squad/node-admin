@@ -6,7 +6,15 @@ import { TripScraperQuery } from './scraper';
 
 // const debug = createFlightSquadDebugger('customer');
 
-export interface CustomerFields extends FirestoreObjectConfig {
+export interface CustomerFields extends FirestoreObjectConfig, CustomerIdentifiers, CustomerActivities { }
+
+export interface CustomerActivities {
+    searches: CustomerSearches;
+    transactions: CustomerTransactions;
+}
+
+export interface CustomerIdentifiers {
+    /** Empty if unknown */
     id: string;
     firstName: string;
     lastName: string;
@@ -14,13 +22,14 @@ export interface CustomerFields extends FirestoreObjectConfig {
     email?: string;
     /** stripe customer id */
     stripe: string;
-    searches: CustomerSearches;
     messaging?: CustomerMessagingIds;
-
-    // TODO link searches and transactions
 }
 
 export interface CustomerSearches {
+    [id: string]: unknown;
+}
+
+export interface CustomerTransactions {
     [id: string]: unknown;
 }
 
@@ -31,11 +40,13 @@ export interface CustomerMessagingIds {
 
 export class Customer extends FirestoreObject implements CustomerFields {
     readonly id: string;
+    // readonly db: Firebase;
     readonly firstName: string;
     readonly lastName: string;
     readonly dob: string;
     readonly stripe: string;
     readonly searches: CustomerSearches;
+    readonly transactions: CustomerTransactions;
     readonly messaging: CustomerMessagingIds;
     static readonly Collection = Firebase.Collections.Customers;
     collection = (): string => Customer.Collection;
@@ -72,7 +83,6 @@ export class Customer extends FirestoreObject implements CustomerFields {
      * @param db
      */
     static createNewCustomer(db: Firebase): Customer {
-        // TODO implement
         return new Customer({
             id: '',
             firstName: '',
@@ -80,6 +90,7 @@ export class Customer extends FirestoreObject implements CustomerFields {
             dob: '',
             stripe: '',
             searches: {},
+            transactions: {},
             db,
         });
     }
@@ -100,18 +111,17 @@ export class Customer extends FirestoreObject implements CustomerFields {
             .where(`messaging.${platform}`, '==', id)
             .get();
         if (customerQuery.empty) {
-            return new Customer({
-                id: '',
-                firstName: '',
-                lastName: '',
-                dob: '',
-                stripe: '',
-                db,
-                messaging: {
-                    [platform]: id,
-                },
-                searches: {},
-            });
+
+            return new Customer(
+                Object.assign(
+                    {
+                        messaging: {
+                            [platform]: id,
+                        }
+                    },
+                    Customer.createNewCustomer(db).data()
+                )
+            );
         }
         // Customer is first doc that matches platform id
         return db.find(Customer.Collection, customerQuery.docs[0].id, Customer);

@@ -1,16 +1,17 @@
 import { FirestoreObject, FirestoreObjectConfig, Firebase } from '../agents';
 import { Database } from '../database';
 import { Trip } from './trip';
-import { Customer } from './customer';
+import { CustomerFields } from './customer';
 
 export interface TransactionFields extends FirestoreObjectConfig {
     status: TransactionStatus;
     amount: number;
-    customer: Customer;
+    // we don't care about the customer's other seraches in a transaction, so we omit that extra data
+    customer: Omit<CustomerFields, 'searches'>;
     trip: Trip;
 }
 
-enum TransactionStatus {
+export enum TransactionStatus {
     Created,
     Pending,
     Processed,
@@ -23,7 +24,7 @@ enum TransactionStatus {
 export class Transaction extends FirestoreObject implements TransactionFields {
     readonly status: TransactionStatus;
     readonly amount: number;
-    readonly customer: Customer;
+    readonly customer: CustomerFields;
     readonly trip: Trip;
 
     private static readonly defaultDb = Database.firebase;
