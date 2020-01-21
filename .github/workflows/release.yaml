@@ -20,10 +20,10 @@ jobs:
 
             - name: Publish
               env:
-                  CI: true
-                  NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+                CI: true
+                NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
               run: |
-                  npm ci
-                  npm run build
-                  npm config set //npm.pkg.github.com/:_authToken=$NPM_TOKEN
-                  npm publish
+                npm ci
+                npm run build
+                npm config set //npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN
+                npm publish
