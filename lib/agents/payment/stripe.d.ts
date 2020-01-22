@@ -10,7 +10,7 @@ export declare class Stripe implements CustomerManager, Chargable {
         description?: string;
         phone?: string;
     }) => Promise<stripe.Customer>;
-    static readonly client: (apiKey: string, config: stripe.StripeConfig) => stripe;
+    static readonly client: (apiKey: string) => stripe;
     static readonly updateDefaultSource: (customer: string, source: string, stripe: stripe) => Promise<stripe.Customer>;
     /**
      * Creates a Stripe customer

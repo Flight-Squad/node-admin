@@ -6,7 +6,7 @@ import { TripScraperQuery } from './scraper';
 
 // const debug = createFlightSquadDebugger('customer');
 
-export interface CustomerFields extends FirestoreObjectConfig, CustomerIdentifiers, CustomerActivities { }
+export interface CustomerFields extends FirestoreObjectConfig, CustomerIdentifiers, CustomerActivities {}
 
 export interface CustomerActivities {
     searches: CustomerSearches;
@@ -86,7 +86,7 @@ export class Customer extends FirestoreObject implements CustomerFields {
 
     /**
      * Returns object with only the customer's actions on the platform, such as:
-     * 
+     *
      * - Searches
      * - Transactions
      */
@@ -130,16 +130,15 @@ export class Customer extends FirestoreObject implements CustomerFields {
             .where(`messaging.${platform}`, '==', id)
             .get();
         if (customerQuery.empty) {
-
             return new Customer(
                 Object.assign(
                     {
                         messaging: {
                             [platform]: id,
-                        }
+                        },
                     },
-                    Customer.createNewCustomer(db).data()
-                )
+                    Customer.createNewCustomer(db).data(),
+                ),
             );
         }
         // Customer is first doc that matches platform id

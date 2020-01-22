@@ -7,7 +7,7 @@ export class Stripe implements CustomerManager, Chargable {
     charge = Stripe.charge;
     createCustomer = Stripe.createCustomer;
 
-    static readonly client = (apiKey: string, config: stripe.StripeConfig) => new stripe(apiKey, config);
+    static readonly client = (apiKey: string) => new stripe(apiKey, { apiVersion: '2019-12-03', typescript: true });
 
     static readonly updateDefaultSource = (customer: string, source: string, stripe: stripe) => stripe.customers.update(customer, {
         default_source: source
@@ -17,11 +17,11 @@ export class Stripe implements CustomerManager, Chargable {
      * Creates a Stripe customer
      */
     static readonly createCustomer = async (customer: CustomerIdentifiers, stripe: stripe, options?: { metadata?: unknown, source?: string, description?: string, phone?: string }) => {
-        const {email, firstName, lastName} = customer;
+        const { email, firstName, lastName } = customer;
         let params = {
             email,
             name: `${firstName} ${lastName}`,
-        };
+        }; { }
         params = Object.assign(params, options);
         return stripe.customers.create(params);
     }
@@ -32,5 +32,4 @@ export class Stripe implements CustomerManager, Chargable {
         params.currency = params.currency || 'usd';
         return stripe.charges.create(params);
     }
-
 }
