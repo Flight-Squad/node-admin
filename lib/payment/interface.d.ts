@@ -1,7 +1,6 @@
 export interface Chargable {
-    charge(config: PaymentFields, ...args);
+    charge(config: PaymentFields, ...args: any[]): any;
 }
-
 export interface PaymentFields {
     amount: number;
     /** Customer ID */
