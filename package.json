@@ -1,6 +1,6 @@
 {
   "name": "@flight-squad/admin",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "description": "Shared admin utilities that should only be accessed server-side",
   "main": "lib/index.js",
   "scripts": {
