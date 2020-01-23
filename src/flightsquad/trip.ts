@@ -64,6 +64,9 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
     static readonly SortPriceAsc = (a: Trip, b: Trip): number => a.price - b.price;
 
     collection = (): string => TripGroup.Collection;
+    find(id: string): Promise<TripGroup> {
+        return this.db.find(TripGroup.Collection, id, TripGroup);
+    }
 
     constructor(props: TripGroupFields) {
         super(props);

@@ -122,6 +122,9 @@ export abstract class FirestoreObject {
     /** Refers to the firestore collection of the object */
     abstract collection(): string;
 
+    /** Find a database record by id */
+    abstract find(id: string);
+
     /** Returns object with extraneous fields ommitted */
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     data() {

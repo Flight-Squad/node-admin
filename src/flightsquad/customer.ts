@@ -145,6 +145,10 @@ export class Customer extends FirestoreObject implements CustomerFields {
         return db.find(Customer.Collection, customerQuery.docs[0].id, Customer);
     }
 
+    find(id: string): Promise<Customer> {
+        return this.db.find(Customer.Collection, id, Customer);
+    }
+
     constructor(props: CustomerFields) {
         super(props);
     }
