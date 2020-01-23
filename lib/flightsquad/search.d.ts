@@ -1,7 +1,7 @@
 import { Firebase, FirestoreObject, FirestoreObjectConfig } from '../agents/firebase';
 import { Queue } from '../queue';
-import { Trip } from './trip';
 import { TripScraperQuery } from './scraper';
+import { Trip } from '@flight-squad/common';
 export declare enum FlightStops {
     NonStop = 0,
     OneStop = 1,

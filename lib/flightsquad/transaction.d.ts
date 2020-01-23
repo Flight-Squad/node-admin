@@ -1,7 +1,6 @@
 import { FirestoreObject, FirestoreObjectConfig } from '../agents';
-import { Trip } from './trip';
 import { CustomerIdentifiers } from './customer';
-import { TransactionStatus } from '@flight-squad/common';
+import { TransactionStatus, Trip } from '@flight-squad/common';
 export interface TransactionFields extends FirestoreObjectConfig {
     status: TransactionStatus;
     amount: number;

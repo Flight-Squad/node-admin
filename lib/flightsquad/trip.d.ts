@@ -1,8 +1,8 @@
 import { FirestoreObjectConfig, FirestoreObject } from '../agents/firebase';
 import { FlightStops, FlightSearch } from './search';
-import { Airport } from './airport';
 import { Queue } from '../queue';
 import { TripScraperQuery } from './scraper';
+import { Trip, SearchProviders } from '@flight-squad/common';
 export interface TripGroupFields extends FirestoreObjectConfig {
     query: TripGroupQuery;
     status: TripGroupProcStatus;
@@ -41,37 +41,6 @@ export interface ProviderResults {
     data: Trip[];
     /** Url that was scraped */
     url: string;
-}
-export interface Trip {
-    price: number;
-    /** Should be in order of arrival
-     *
-     * e.g origin should be first stop,
-     * destination should be last,
-     * with layovers in between
-     */
-    stops: TripStop[];
-    /** Search Provider (aka scraping module) */
-    provider: SearchProviders;
-}
-export interface TripStop {
-    stop: Airport;
-    operator: string;
-    flightNum: string;
-    arrivalTime: string;
-    departTime: string;
-    duration: string;
-}
-/** Search Providers enabled
- *
- * Key is scraper module
- *
- * Value is key of scraper results in TripGroup object
- */
-export declare enum SearchProviders {
-    GoogleFlights = "google",
-    Kayak = "kayak",
-    Southwest = "southwest"
 }
 export declare class TripGroup extends FirestoreObject implements TripGroupFields {
     readonly query: TripGroupQuery;

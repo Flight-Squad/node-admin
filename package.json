@@ -46,7 +46,7 @@
     }
   },
   "dependencies": {
-    "@flight-squad/common": "0.0.5",
+    "@flight-squad/common": "0.0.7",
     "@types/debug": "^4.1.5",
     "aws-sdk": "^2.600.0",
     "debug": "^4.1.1",

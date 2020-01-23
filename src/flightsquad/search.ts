@@ -1,9 +1,10 @@
 import { Firebase, FirestoreObject, FirestoreObjectConfig } from '../agents/firebase';
 import { Database } from '../database';
 import { Queue } from '../queue';
-import { TripGroup, TripGroupQuery, TripGroupProcStatus, Trip } from './trip';
+import { TripGroup, TripGroupQuery, TripGroupProcStatus } from './trip';
 import { TripScraperQuery } from './scraper';
 import { createFlightSquadDebugger } from '../debugger';
+import { Trip } from '@flight-squad/common';
 // import path from 'path';
 
 const debug = createFlightSquadDebugger('search');

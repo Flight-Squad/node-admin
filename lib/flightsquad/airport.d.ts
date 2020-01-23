@@ -1,12 +1,5 @@
 import { FirebaseDoc, Firebase } from '../agents';
-export interface Airport {
-    /** The city the airport is in */
-    city: string;
-    /** iata code of airport */
-    code: string;
-    /** Public name of the airport */
-    name: string;
-}
+import { Airport } from '@flight-squad/common';
 export interface IataMapper {
     iatas(...args: any[]): string[] | Promise<string[]>;
 }
