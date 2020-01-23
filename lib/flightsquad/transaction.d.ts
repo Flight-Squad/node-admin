@@ -1,17 +1,12 @@
 import { FirestoreObject, FirestoreObjectConfig } from '../agents';
 import { Trip } from './trip';
 import { CustomerIdentifiers } from './customer';
+import { TransactionStatus } from '@flight-squad/common';
 export interface TransactionFields extends FirestoreObjectConfig {
     status: TransactionStatus;
     amount: number;
     customer: CustomerIdentifiers;
     trip: Trip;
-}
-export declare enum TransactionStatus {
-    Created = 0,
-    Pending = 1,
-    Processed = 2,
-    Failed = 3
 }
 /**
  * Make a transaction and use it to send follow up message to customer

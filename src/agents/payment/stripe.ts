@@ -21,7 +21,7 @@ export class Stripe implements CustomerManager, Chargable {
         let params = {
             email,
             name: `${firstName} ${lastName}`,
-        }; { }
+        };
         params = Object.assign(params, options);
         return stripe.customers.create(params);
     }
