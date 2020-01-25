@@ -54,6 +54,8 @@ export declare class FlightSearch extends FirestoreObject implements FlightSearc
     private static readonly db;
     static readonly Collection: string;
     collection: () => string;
+    static find(db: Firebase, id: string): Promise<FlightSearch>;
+    find(id: string): Promise<FlightSearch>;
     constructor(props: FlightSearchFields);
     /**
      * Creates a Flight Search

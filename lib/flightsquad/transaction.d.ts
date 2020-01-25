@@ -1,4 +1,4 @@
-import { FirestoreObject, FirestoreObjectConfig } from '../agents';
+import { FirestoreObject, FirestoreObjectConfig, Firebase } from '../agents';
 import { CustomerIdentifiers } from './customer';
 import { TransactionStatus, Trip } from '@flight-squad/common';
 export interface TransactionFields extends FirestoreObjectConfig {
@@ -19,4 +19,6 @@ export declare class Transaction extends FirestoreObject implements TransactionF
     private static readonly defaultDb;
     constructor(props: TransactionFields);
     collection: () => string;
+    static find(db: Firebase, id: string): Promise<Transaction>;
+    find: (id: string) => Promise<Transaction>;
 }

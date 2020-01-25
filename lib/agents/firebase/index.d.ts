@@ -52,6 +52,8 @@ export declare abstract class FirestoreObject {
     constructor(props: FirestoreObjectConfig);
     /** Refers to the firestore collection of the object */
     abstract collection(): string;
+    /** Find a database record by id */
+    abstract find(id: string): any;
     /** Returns object with extraneous fields ommitted */
     data(): any;
     /**

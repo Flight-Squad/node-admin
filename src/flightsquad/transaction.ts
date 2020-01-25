@@ -28,7 +28,8 @@ export class Transaction extends FirestoreObject implements TransactionFields {
     }
 
     collection = (): string => Transaction.Collection;
-    find(id: string): Promise<Transaction> {
-        return this.db.find(Transaction.Collection, id, Transaction);
+    static find(db: Firebase, id: string): Promise<Transaction> {
+        return db.find(Transaction.Collection, id, Transaction);
     }
+    find = (id: string): Promise<Transaction> => Transaction.find(this.db, id);
 }

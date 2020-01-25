@@ -66,6 +66,7 @@ export declare class Customer extends FirestoreObject implements CustomerFields 
      * - Transactions
      */
     activities(): CustomerActivities;
+    readonly getUserId: (messagingPlatform: string) => string;
     /**
      * Returns a customer with unique id and empty fields
      *
@@ -84,5 +85,7 @@ export declare class Customer extends FirestoreObject implements CustomerFields 
      * @param id
      */
     static fromMessaging(db: Firebase, platform: string, id: string): Promise<Customer>;
+    static find(db: Firebase, id: string): Promise<Customer>;
+    find: (id: string) => Promise<Customer>;
     constructor(props: CustomerFields);
 }

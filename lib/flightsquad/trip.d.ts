@@ -1,4 +1,4 @@
-import { FirestoreObjectConfig, FirestoreObject } from '../agents/firebase';
+import { FirestoreObjectConfig, FirestoreObject, Firebase } from '../agents/firebase';
 import { FlightStops, FlightSearch } from './search';
 import { Queue } from '../queue';
 import { TripScraperQuery } from './scraper';
@@ -51,6 +51,8 @@ export declare class TripGroup extends FirestoreObject implements TripGroupField
     static readonly Collection: string;
     static readonly SortPriceAsc: (a: Trip, b: Trip) => number;
     collection: () => string;
+    static find(db: Firebase, id: string): Promise<TripGroup>;
+    find(id: string): Promise<TripGroup>;
     constructor(props: TripGroupFields);
     /**
      * Step 1: Start scraping trips

@@ -80,6 +80,7 @@ export class Customer extends FirestoreObject implements CustomerFields {
      * Returns object with only the customer's identifiers
      */
     identifiers(): CustomerIdentifiers {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { searches, transactions, ...identifiers } = this.data();
         return identifiers;
     }
@@ -94,6 +95,8 @@ export class Customer extends FirestoreObject implements CustomerFields {
         const { searches, transactions } = this.data();
         return { searches, transactions };
     }
+
+    readonly getUserId = (messagingPlatform: string): string => this.messaging[messagingPlatform];
 
     /**
      * Returns a customer with unique id and empty fields
@@ -145,9 +148,13 @@ export class Customer extends FirestoreObject implements CustomerFields {
         return db.find(Customer.Collection, customerQuery.docs[0].id, Customer);
     }
 
-    find(id: string): Promise<Customer> {
-        return this.db.find(Customer.Collection, id, Customer);
+    // static readonly find(db: )
+
+    static find(db: Firebase, id: string): Promise<Customer> {
+        return db.find(Customer.Collection, id, Customer);
     }
+
+    find = (id: string): Promise<Customer> => Customer.find(this.db, id);
 
     constructor(props: CustomerFields) {
         super(props);
