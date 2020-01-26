@@ -20,6 +20,7 @@ export enum FlightSearchStatus {
     InProgress,
     Halted,
     Done,
+    Error,
 }
 
 export interface FlightSearchMeta {

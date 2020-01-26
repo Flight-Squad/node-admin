@@ -11,7 +11,8 @@ export declare enum FlightSearchStatus {
     Requested = 0,
     InProgress = 1,
     Halted = 2,
-    Done = 3
+    Done = 3,
+    Error = 4
 }
 export interface FlightSearchMeta {
     /** session id */
