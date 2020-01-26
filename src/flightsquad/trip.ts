@@ -103,7 +103,9 @@ export class TripGroup extends FirestoreObject implements TripGroupFields {
      */
     addProvider(provider: SearchProviders, results: ProviderResults): Promise<TripGroup> {
         debug('Adding provider %s to group %s', provider, this.id);
-        return this.updateDoc({ providers: { [provider]: results } }, TripGroup);
+        const providers = this.providers;
+        providers[provider] = results;
+        return this.updateDoc({ providers }, TripGroup);
     }
 
     /**
