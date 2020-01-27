@@ -1,22 +1,15 @@
 import { FirestoreObjectConfig, FirestoreObject, Firebase } from '../agents/firebase';
-import { FlightStops, FlightSearch } from './search';
+import { FlightSearch } from './search';
 import { Queue } from '../queue';
 import { TripScraperQuery } from './scraper';
-import { Trip, SearchProviders } from '@flight-squad/common';
+import { Trip, SearchProviders, TripGroupQuery } from '@flight-squad/common';
+export { TripGroupQuery };
 export interface TripGroupFields extends FirestoreObjectConfig {
     query: TripGroupQuery;
     status: TripGroupProcStatus;
     providers: TripGroupProviders;
     /** The search this Trip Group belongs to */
     searchId: string;
-}
-export interface TripGroupQuery {
-    origin: string;
-    dest: string;
-    departDate: string | Date;
-    returnDate?: string | Date;
-    isRoundTrip: boolean;
-    stops: FlightStops | string | number;
 }
 /** Processing Status */
 export declare enum TripGroupProcStatus {

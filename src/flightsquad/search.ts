@@ -4,16 +4,12 @@ import { Queue } from '../queue';
 import { TripGroup, TripGroupQuery, TripGroupProcStatus } from './trip';
 import { TripScraperQuery } from './scraper';
 import { createFlightSquadDebugger } from '../debugger';
-import { Trip } from '@flight-squad/common';
+import { Trip, FlightStops } from '@flight-squad/common';
 // import path from 'path';
 
 const debug = createFlightSquadDebugger('search');
 
-export enum FlightStops {
-    NonStop,
-    OneStop,
-    AnyStops,
-}
+export { FlightStops };
 
 export enum FlightSearchStatus {
     Requested,
