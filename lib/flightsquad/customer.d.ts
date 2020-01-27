@@ -79,7 +79,7 @@ export declare class Customer extends FirestoreObject implements CustomerFields 
      *
      * If no existing customer is found, an object representing a new customer is returned
      *
-     * Does not write to `db`.
+     * Writes new customer to db if no existing customer is found
      * @param db
      * @param platform
      * @param id

@@ -122,7 +122,7 @@ export class Customer extends FirestoreObject implements CustomerFields {
      *
      * If no existing customer is found, an object representing a new customer is returned
      *
-     * Does not write to `db`.
+     * Writes new customer to db if no existing customer is found
      * @param db
      * @param platform
      * @param id
@@ -133,7 +133,7 @@ export class Customer extends FirestoreObject implements CustomerFields {
             .where(`messaging.${platform}`, '==', id)
             .get();
         if (customerQuery.empty) {
-            return new Customer(
+            return await new Customer(
                 Object.assign(
                     {
                         messaging: {
@@ -142,7 +142,7 @@ export class Customer extends FirestoreObject implements CustomerFields {
                     },
                     Customer.createNewCustomer(db).data(),
                 ),
-            );
+            ).createDoc();
         }
         // Customer is first doc that matches platform id
         return db.find(Customer.Collection, customerQuery.docs[0].id, Customer);
