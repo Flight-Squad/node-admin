@@ -29,8 +29,8 @@ export const Discount = (origPrice: number, strategy: ValidPricingStrategyConfig
 export class PricingStrategyConfig extends FirebaseDoc {
     strategy = (): ValidPricingStrategyConfig => {
         const cfg = {};
-        for (const [key, val] of this.data) {
-            cfg[key] = val.multiplier;
+        for (const [key, val] of Object.entries(this.data)) {
+            cfg[key] = val['multiplier'];
         }
         return cfg;
     };
