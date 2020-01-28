@@ -14,8 +14,11 @@ export const Discount = (origPrice: number, strategy: ValidPricingStrategyConfig
 
     const breakpoints = Object.keys(strategy)
         .map(mapToNumber)
+        .filter(val => val !== Number.NaN)
         .sort();
     const breakpoint = breakpoints.find(point => point >= origPrice);
+
+    // If price is higher than any set breakpoint
     if (breakpoint === undefined) return origPrice;
 
     const multiplier = Number(strategy['' + breakpoint]);
