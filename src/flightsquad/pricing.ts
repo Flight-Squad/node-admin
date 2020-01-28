@@ -27,7 +27,14 @@ export const Discount = (origPrice: number, strategy: ValidPricingStrategyConfig
 };
 
 export class PricingStrategyConfig extends FirebaseDoc {
-    strategy = (): ValidPricingStrategyConfig => this.data;
+    strategy = (): ValidPricingStrategyConfig => {
+        const cfg = {};
+        for (const [key, val] of this.data) {
+            cfg[key] = val.multiplier;
+        }
+        return cfg;
+    };
+
     constructor(docId: string, sheetName: string, db: Firebase) {
         super(`${docId}/${sheetName}`, db);
     }
