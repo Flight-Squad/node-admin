@@ -9,3 +9,5 @@ export * from './scraper';
 export * from './airport';
 // Part 5: Create Transaction from Trip
 export * from './transaction';
+
+export * from './pricing';

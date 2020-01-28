@@ -4,3 +4,4 @@ export * from './trip';
 export * from './scraper';
 export * from './airport';
 export * from './transaction';
+export * from './pricing';
