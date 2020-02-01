@@ -49,6 +49,7 @@ export interface FirebaseConfig {
 export declare abstract class FirestoreObject {
     id: string;
     db: Firebase;
+    createdAt: string | number | Date | firestore.Timestamp;
     constructor(props: FirestoreObjectConfig);
     /** Refers to the firestore collection of the object */
     abstract collection(): string;
@@ -75,6 +76,7 @@ export declare abstract class FirestoreObject {
 export interface FirestoreObjectConfig {
     id: string;
     db: Firebase;
+    createdAt?: string | number | Date | firestore.Timestamp;
     [field: string]: any;
 }
 /**

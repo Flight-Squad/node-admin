@@ -105,6 +105,7 @@ export interface FirebaseConfig {
 export abstract class FirestoreObject {
     id: string;
     db: Firebase;
+    createdAt: string | number | Date | firestore.Timestamp;
 
     constructor(props: FirestoreObjectConfig) {
         const { id, db, ...data } = props;
@@ -156,6 +157,7 @@ export abstract class FirestoreObject {
     }
 
     async createDoc(): Promise<this> {
+        this.createdAt = firestore.Timestamp.fromDate(new Date());
         await this.db.update(this.collection(), this.id, this.data());
         return this;
     }
@@ -169,6 +171,7 @@ export abstract class FirestoreObject {
 export interface FirestoreObjectConfig {
     id: string;
     db: Firebase;
+    createdAt?: string | number | Date | firestore.Timestamp;
     // Suppport additional fields
     // eslint-disable-next-line
     [field: string]: any;
