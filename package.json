@@ -28,6 +28,7 @@
     "devDependencies": {
         "@types/chai": "^4.2.7",
         "@types/mocha": "^5.2.7",
+        "@types/nanoid": "^2.1.0",
         "@types/node": "^13.1.2",
         "@types/stripe": "^7.13.20",
         "@typescript-eslint/eslint-plugin": "^2.14.0",
@@ -56,6 +57,7 @@
         "aws-sdk": "^2.600.0",
         "debug": "^4.1.1",
         "firebase-admin": "^8.9.0",
+        "nanoid": "^2.1.11",
         "plaid": "^4.3.0",
         "stripe": "^8.4.1",
         "uuid": "^3.3.3"

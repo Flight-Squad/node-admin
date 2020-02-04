@@ -18,6 +18,7 @@ export declare class Transaction extends FirestoreObject implements TransactionF
     static readonly Collection: string;
     private static readonly defaultDb;
     constructor(props: TransactionFields);
+    generateId: () => string;
     collection: () => string;
     static find(db: Firebase, id: string): Promise<Transaction>;
     find: (id: string) => Promise<Transaction>;

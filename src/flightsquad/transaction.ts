@@ -2,6 +2,7 @@ import { FirestoreObject, FirestoreObjectConfig, Firebase } from '../agents';
 import { Database } from '../database';
 import { CustomerIdentifiers } from './customer';
 import { TransactionStatus, Trip } from '@flight-squad/common';
+import nanoid from 'nanoid';
 
 export interface TransactionFields extends FirestoreObjectConfig {
     status: TransactionStatus;
@@ -26,6 +27,10 @@ export class Transaction extends FirestoreObject implements TransactionFields {
         super(props);
         this.db = props.db || Transaction.defaultDb;
     }
+
+    // 139 yrs at avg 1k/ids/sec until statistcally significant chance of collision
+    // https://zelark.github.io/nano-id-cc/
+    generateId = (): string => nanoid(11);
 
     collection = (): string => Transaction.Collection;
     static find(db: Firebase, id: string): Promise<Transaction> {

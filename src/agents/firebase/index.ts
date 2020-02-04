@@ -2,7 +2,6 @@ import admin, { firestore } from 'firebase-admin';
 import fs from 'fs';
 import { ConfigFunc } from '../../entity';
 import { DbImplementation } from '../../database/interfaces';
-import { Database } from '../../database';
 import uuidv4 from 'uuid/v4';
 // import { createFlightSquadDebugger } from '../../debugger';
 
@@ -109,12 +108,10 @@ export abstract class FirestoreObject {
 
     constructor(props: FirestoreObjectConfig) {
         const { id, db, ...data } = props;
-        this.id = id || uuidv4();
-        // Easier testing
-        if ((props.coll || props.collection) && process.env.NODE_ENV !== 'production') {
-            this.collection = (): string => props.coll || props.collection || this.collection();
-        }
-        this.db = db || Database.firebase;
+        this.id = id || this.generateId();
+        this.db = db;
+        // Support for explicit collection setting
+        this.collection = (): string => props.coll || props.collection || this.collection();
         for (const [key, val] of Object.entries(data)) {
             this[key] = val;
         }
@@ -125,6 +122,8 @@ export abstract class FirestoreObject {
 
     /** Find a database record by id */
     abstract find(id: string);
+
+    generateId = (): string => uuidv4();
 
     /** Returns object with extraneous fields ommitted */
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -157,7 +156,7 @@ export abstract class FirestoreObject {
     }
 
     async createDoc(): Promise<this> {
-        this.createdAt = firestore.Timestamp.fromDate(new Date());
+        this.createdAt = this.createdAt || firestore.Timestamp.fromDate(new Date());
         await this.db.update(this.collection(), this.id, this.data());
         return this;
     }
