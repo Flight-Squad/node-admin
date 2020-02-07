@@ -25,6 +25,7 @@ export class Transaction extends FirestoreObject implements TransactionFields {
     private static readonly defaultDb = Database.firebase;
     constructor(props: TransactionFields) {
         super(props);
+        this.id = props.id || this.generateId();
         this.db = props.db || Transaction.defaultDb;
     }
 
