@@ -37,6 +37,21 @@ export class Stripe implements CustomerManager, Chargable {
         return stripe.customers.create(params);
     };
 
+    static readonly createSource = (
+        stripe: stripe,
+        customerId: string,
+        token: string,
+    ): Promise<stripe.CustomerSource> => stripe.customers.createSource(customerId, { source: token });
+
+    /**
+     * 3 ways to create a charge: https://stackoverflow.com/a/34416413
+     *
+     * 1. `source` only
+     *
+     * 2. `customer` only
+     *
+     * 3. `customer` and `source` -> `source` must be linked to `customer`
+     */
     static readonly charge = (config: PaymentFields, stripe: stripe): Promise<stripe.Charge> => {
         const params = Object.assign({}, config);
         // usd is default currency

@@ -5,7 +5,7 @@ export interface Chargable {
 export interface PaymentFields {
     amount: number;
     /** Customer ID */
-    customer: string;
+    customer?: string;
     /** Payment Token */
     source?: string;
     currency?: string;
