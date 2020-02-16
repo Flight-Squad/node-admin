@@ -36,6 +36,16 @@ export class BatchQueue<T> implements Queue<T> {
                     parameters: {
                         data: JSON.stringify(data),
                     },
+                    containerOverrides: {
+                        environment: [
+                            {
+                                // Ensure container's NODE_ENV matches our's at runtime
+                                // This will ensure that compatible env variables are loaded from EnvKey
+                                name: 'NODE_ENV',
+                                value: process.env.NODE_ENV,
+                            },
+                        ],
+                    },
                 },
                 jobCallback,
             );
