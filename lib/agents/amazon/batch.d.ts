@@ -18,6 +18,13 @@ export interface BatchQueueIdentifiers {
      * You can specify either the name or the Amazon Resource Name (ARN) of the queue.
      */
     jobQueue: string;
+    /**
+     * Array of key value pairs to override in container jobs
+     */
+    environment?: Array<{
+        name: string;
+        value: string;
+    }>;
 }
 export declare class BatchQueue<T> implements Queue<T> {
     readonly props: BatchQueueIdentifiers;
@@ -29,5 +36,13 @@ export declare class BatchQueue<T> implements Queue<T> {
      */
     pushAll(data: T[], callback?: (err: AWS.AWSError, data: AWS.Batch.SubmitJobResponse) => void): void;
     protected batch: AWS.Batch;
+    /**
+     * Any environment overrides passed in through the constructor will
+     * be added to this array.
+     */
+    protected environment: Array<{
+        name: string;
+        value: string;
+    }>;
     constructor(props: BatchQueueIdentifiers);
 }

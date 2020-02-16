@@ -19,13 +19,17 @@ export interface BatchQueueIdentifiers {
      * You can specify either the name or the Amazon Resource Name (ARN) of the queue.
      */
     jobQueue: string;
+    /**
+     * Array of key value pairs to override in container jobs
+     */
+    environment?: Array<{ name: string; value: string }>;
 }
 
 export class BatchQueue<T> implements Queue<T> {
     push(data: T, callback?: (err: AWS.AWSError, data: AWS.Batch.SubmitJobResponse) => void): void {
-        const jobCallback = (err: AWS.AWSError, data: AWS.Batch.SubmitJobResponse): void => {
+        function jobCallback(err: AWS.AWSError, data: AWS.Batch.SubmitJobResponse): void {
             if (callback) callback(err, data);
-        };
+        }
 
         try {
             this.batch.submitJob(
@@ -37,14 +41,7 @@ export class BatchQueue<T> implements Queue<T> {
                         data: JSON.stringify(data),
                     },
                     containerOverrides: {
-                        environment: [
-                            {
-                                // Ensure container's NODE_ENV matches our's at runtime
-                                // This will ensure that compatible env variables are loaded from EnvKey
-                                name: 'NODE_ENV',
-                                value: process.env.NODE_ENV,
-                            },
-                        ],
+                        environment: this.environment,
                     },
                 },
                 jobCallback,
@@ -64,5 +61,22 @@ export class BatchQueue<T> implements Queue<T> {
     }
 
     protected batch = new AWS.Batch({ apiVersion: '2016-08-10' });
-    constructor(readonly props: BatchQueueIdentifiers) {}
+
+    /**
+     * Any environment overrides passed in through the constructor will
+     * be added to this array.
+     */
+    protected environment: Array<{ name: string; value: string }> = [
+        {
+            // Ensure container's NODE_ENV matches our's at runtime
+            // This will ensure that compatible env variables are loaded from EnvKey
+            name: 'NODE_ENV',
+            value: process.env.NODE_ENV,
+        },
+    ];
+    constructor(readonly props: BatchQueueIdentifiers) {
+        if (props.environment) {
+            this.environment.push(...props.environment);
+        }
+    }
 }
