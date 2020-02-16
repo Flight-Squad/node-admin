@@ -6,5 +6,8 @@ set -e
 npm run build:clean
 git add .
 git commit
-npm version patch
+
+# Pass all arguments to this script through to `npm version` command
+npm version $@
+
 git push --follow-tags

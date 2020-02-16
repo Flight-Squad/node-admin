@@ -30,9 +30,9 @@ export class BatchQueue<T> implements Queue<T> {
         try {
             this.batch.submitJob(
                 {
-                    jobDefinition: '',
-                    jobName: '',
-                    jobQueue: '',
+                    jobDefinition: this.props.jobDefinition,
+                    jobName: this.props.jobName,
+                    jobQueue: this.props.jobQueue,
                     parameters: {
                         data: JSON.stringify(data),
                     },
@@ -53,6 +53,6 @@ export class BatchQueue<T> implements Queue<T> {
         }
     }
 
-    private batch = new AWS.Batch({ apiVersion: '2016-08-10' });
+    protected batch = new AWS.Batch({ apiVersion: '2016-08-10' });
     constructor(readonly props: BatchQueueIdentifiers) {}
 }
