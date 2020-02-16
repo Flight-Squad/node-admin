@@ -23,6 +23,8 @@ export interface BatchQueueIdentifiers {
      * Array of key value pairs to override in container jobs
      */
     environment?: Array<{ name: string; value: string }>;
+    /** Region of the Batch Queue */
+    region: string;
 }
 
 export class BatchQueue<T> implements Queue<T> {
@@ -75,6 +77,7 @@ export class BatchQueue<T> implements Queue<T> {
         },
     ];
     constructor(readonly props: BatchQueueIdentifiers) {
+        this.batch.config.update({ region: props.region });
         if (props.environment) {
             this.environment.push(...props.environment);
         }

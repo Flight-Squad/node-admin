@@ -25,6 +25,8 @@ export interface BatchQueueIdentifiers {
         name: string;
         value: string;
     }>;
+    /** Region of the Batch Queue */
+    region: string;
 }
 export declare class BatchQueue<T> implements Queue<T> {
     readonly props: BatchQueueIdentifiers;
