@@ -77,6 +77,8 @@ export class BatchQueue<T> implements Queue<T> {
         },
     ];
     constructor(readonly props: BatchQueueIdentifiers) {
+        // Bug with AWS Batch SDK, need to set region globally to define the Batch hostname
+        AWS.config.update({ region: props.region });
         this.batch.config.update({ region: props.region });
         if (props.environment) {
             this.environment.push(...props.environment);
