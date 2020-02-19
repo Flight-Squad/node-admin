@@ -183,8 +183,8 @@ export interface FirestoreObjectConfig {
  * Represents a Firebase Document
  */
 export class FirebaseDoc {
-    protected data;
-    protected ref;
+    data;
+    ref;
     constructor(path: string, db: Firebase) {
         this.ref = db.firebase.ref(path);
     }
