@@ -139,6 +139,7 @@ export class Customer extends FirestoreObject implements CustomerFields {
                         messaging: {
                             [platform]: id,
                         },
+                        db,
                     },
                     Customer.createNewCustomer(db).data(),
                 ),
