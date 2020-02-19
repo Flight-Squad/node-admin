@@ -28,6 +28,9 @@ export class Firebase implements DbImplementation {
         return new Firebase(admin.database(), admin.firestore());
     };
 
+    static readonly from = (firebase: admin.database.Database, firestore: firestore.Firestore): Firebase =>
+        new Firebase(firebase, firestore);
+
     private mergeSet = (docRef: firestore.DocumentReference, data): Promise<firestore.WriteResult> =>
         docRef.set(data, { merge: true });
 

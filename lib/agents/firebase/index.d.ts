@@ -6,6 +6,7 @@ export declare class Firebase implements DbImplementation {
     readonly firestore: firestore.Firestore;
     private constructor();
     static readonly init: ConfigFunc<Firebase, FirebaseConfig>;
+    static readonly from: (firebase: admin.database.Database, firestore: firestore.Firestore) => Firebase;
     private mergeSet;
     private docRef;
     del(doc: FirestoreDocId): Promise<firestore.WriteResult>;
