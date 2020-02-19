@@ -37,5 +37,7 @@ export class PricingStrategyConfig extends FirebaseDoc {
 
     constructor(docId: string, sheetName: string, db: Firebase) {
         super(`${docId}/${sheetName}`, db);
+        console.log('Firebase Doc Path');
+        console.log(`${docId}/${sheetName}`);
     }
 }
