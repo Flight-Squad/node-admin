@@ -29,10 +29,10 @@ export interface ConfiguredScraperQuery extends TripScraperQuery {
     config: QueryConfig;
 }
 
-export class ScraperQueryHandler implements Queue<TripScraperQuery> {
+export class ScraperQueueHandler implements Queue<TripScraperQuery> {
     async push(data: TripScraperQuery): Promise<void> {
         await this.Db.firestore
-            .collection('scraper_queries')
+            .collection(ScraperQueueHandler.Collection)
             .doc()
             .create({
                 ...data,
@@ -45,6 +45,8 @@ export class ScraperQueryHandler implements Queue<TripScraperQuery> {
             await this.push(item);
         }
     }
+
+    static readonly Collection = 'scraper_queries';
 
     constructor(readonly Db: Firebase, readonly config: QueryConfig) {}
 }

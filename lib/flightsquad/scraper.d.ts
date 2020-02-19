@@ -24,10 +24,11 @@ export interface QueryConfig {
 export interface ConfiguredScraperQuery extends TripScraperQuery {
     config: QueryConfig;
 }
-export declare class ScraperQueryHandler implements Queue<TripScraperQuery> {
+export declare class ScraperQueueHandler implements Queue<TripScraperQuery> {
     readonly Db: Firebase;
     readonly config: QueryConfig;
     push(data: TripScraperQuery): Promise<void>;
     pushAll(data: TripScraperQuery[]): Promise<void>;
+    static readonly Collection = "scraper_queries";
     constructor(Db: Firebase, config: QueryConfig);
 }
